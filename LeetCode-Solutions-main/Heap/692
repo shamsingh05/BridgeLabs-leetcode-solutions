@@ -1,0 +1,39 @@
+import java.util.*;
+
+class Solution {
+    public List<String> topKFrequent(String[] words, int k) {
+        HashMap<String, Integer> map = new HashMap<>();
+
+        // Step 1: count frequency
+        for (String word : words) {
+            map.put(word, map.getOrDefault(word, 0) + 1);
+        }
+
+        // Step 2: min heap
+        PriorityQueue<String> pq = new PriorityQueue<>(
+            (a, b) -> {
+                if (map.get(a).equals(map.get(b))) {
+                    return b.compareTo(a); // reverse lex order
+                }
+                return map.get(a) - map.get(b); // smaller freq first
+            }
+        );
+
+        // Step 3: keep top k
+        for (String word : map.keySet()) {
+            pq.add(word);
+            if (pq.size() > k) {
+                pq.poll();
+            }
+        }
+
+        // Step 4: build result
+        List<String> result = new ArrayList<>();
+        while (!pq.isEmpty()) {
+            result.add(pq.poll());
+        }
+
+        Collections.reverse(result);
+        return result;
+    }
+}
